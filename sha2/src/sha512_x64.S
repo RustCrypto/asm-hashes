@@ -92,14 +92,13 @@ sha512_compress:
     
     #define ROUNDTAIL(a, b, c, d, e, f, g, h, k)  \
         /* Part 0 */       \
-        movq  %e, %rcx;    \
-        movq  %e, %rdx;    \
+        /* ROR transformation inspired by Intel's SHA-256 implementation */ \
         movq  %e, %rax;    \
-        rorq  $18, %rcx;   \
-        rorq  $41, %rdx;   \
+        rorq  $23, %rax;    \
+        xorq  %e, %rax;    \
+        rorq  $4, %rax;    \
+        xorq  %e, %rax;    \
         rorq  $14, %rax;   \
-        xorq  %rdx, %rcx;  \
-        xorq  %rcx, %rax;  \
         addq  %rbx, %h;    \
         movq  %g, %rcx;    \
         xorq  %f, %rcx;    \
@@ -112,14 +111,13 @@ sha512_compress:
         /* Part 1 */       \
         addq  %h, %d;      \
         /* Part 2 */       \
-        movq  %a, %rcx;    \
-        movq  %a, %rdx;    \
+        /* ROR transformation inspired by Intel's SHA-256 implementation */ \
         movq  %a, %rax;    \
-        rorq  $39, %rcx;   \
-        rorq  $34, %rdx;   \
+        rorq  $5, %rax;    \
+        xorq  %a, %rax;    \
+        rorq  $6, %rax;    \
+        xorq  %a, %rax;    \
         rorq  $28, %rax;   \
-        xorq  %rdx, %rcx;  \
-        xorq  %rcx, %rax;  \
         movq  %c, %rcx;    \
         addq  %rax, %h;    \
         movq  %c, %rax;    \
