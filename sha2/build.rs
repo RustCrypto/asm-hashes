@@ -9,11 +9,17 @@ fn main() {
         panic!("Unsupported target architecture");
     };
     cc::Build::new()
-              .flag("-c")
-              .file(sha256_path)
-              .compile("libsha256.a");
+        .flag("-c")
+        .file(sha256_path)
+        .compile("libsha256.a");
     cc::Build::new()
-              .flag("-c")
-              .file(sha512_path)
-              .compile("libsha512.a");
+        .flag("-c")
+        .file(sha512_path)
+        .compile("libsha512.a");
+    cc::Build::new()
+        .flag("-c")
+        .flag("-msse4.1")
+        .flag("-msha")
+        .file("src/sha256_x64.c")
+        .compile("libsha256_shani.a");
 }
