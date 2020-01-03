@@ -33,19 +33,31 @@ extern crate block_buffer;
 #[macro_use] pub extern crate digest;
 #[cfg(feature = "std")]
 extern crate std;
-#[cfg(not(feature = "asm"))]
+#[cfg(any(not(feature = "asm"), all(feature = "asm", target_arch = "aarch64")))]
 extern crate fake_simd as simd;
 
 #[cfg(feature = "asm")]
 extern crate sha1_asm;
-#[cfg(feature = "asm")]
+#[cfg(all(feature = "asm", not(target_arch = "aarch64")))]
 #[inline(always)]
 fn compress(state: &mut [u32; 5], block: &GenericArray<u8, U64>) {
     let block: &[u8; 64] = unsafe { core::mem::transmute(block) };
     sha1_asm::compress(state, block);
 }
+#[cfg(all(feature = "asm", target_arch = "aarch64"))]
+mod aarch64;
+#[cfg(all(feature = "asm", target_arch = "aarch64"))]
+#[inline(always)]
+fn compress(state: &mut [u32; 5], block: &GenericArray<u8, U64>) {
+    if aarch64::sha1_supported() {
+        let block: &[u8; 64] = unsafe { core::mem::transmute(block) };
+        sha1_asm::compress(state, block);
+    } else {
+        utils::compress(state, block);
+    }
+}
 
-#[cfg(not(feature = "asm"))]
+#[cfg(any(not(feature = "asm"), all(feature = "asm", target_arch = "aarch64")))]
 mod utils;
 #[cfg(not(feature = "asm"))]
 use utils::compress;
