@@ -67,10 +67,12 @@ extern crate sha2_asm;
 extern crate std;
 
 mod consts;
-#[cfg(not(feature = "asm"))]
+#[cfg(any(not(feature = "asm"), target_arch = "aarch64"))]
 mod sha256_utils;
-#[cfg(not(feature = "asm"))]
+#[cfg(any(not(feature = "asm"), target_arch = "aarch64"))]
 mod sha512_utils;
+#[cfg(all(feature = "asm", target_arch = "aarch64"))]
+mod aarch64;
 mod sha256;
 mod sha512;
 
