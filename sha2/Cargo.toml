@@ -1,6 +1,6 @@
 [package]
 name = "sha2-asm"
-version = "0.5.2"
+version = "0.5.3"
 authors = ["RustCrypto Developers"]
 license = "MIT"
 description = "Assembly implementation of SHA-2 compression functions"
@@ -8,8 +8,6 @@ documentation = "https://docs.rs/sha2-asm"
 repository = "https://github.com/RustCrypto/asm-hashes"
 keywords = ["crypto", "sha2", "asm"]
 categories = ["cryptography", "no-std"]
-
-[dependencies]
 
 [build-dependencies]
 cc = "1.0"
