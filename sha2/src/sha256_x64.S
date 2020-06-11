@@ -92,14 +92,13 @@ sha256_compress:
     
     #define ROUNDTAIL(a, b, c, d, e, f, g, h, k)  \
         /* Part 0 */               \
-        movl  %e, %ecx;            \
-        movl  %e, %edx;            \
+        /* See Intel's "Fast SHA-256 Implementations" for the ROR transformation */ \
         movl  %e, %eax;            \
-        rorl  $11, %ecx;           \
-        rorl  $25, %edx;           \
+        rorl  $14, %eax;            \
+        xorl  %e, %eax;            \
+        rorl  $5, %eax;            \
+        xorl  %e, %eax;            \
         rorl  $6, %eax;            \
-        xorl  %edx, %ecx;          \
-        xorl  %ecx, %eax;          \
         addl  %ebx, %h;            \
         movl  %g, %ecx;            \
         xorl  %f, %ecx;            \
@@ -110,14 +109,13 @@ sha256_compress:
         /* Part 1 */               \
         addl  %h, %d;              \
         /* Part 2 */               \
-        movl  %a, %ecx;            \
-        movl  %a, %edx;            \
+        /* See Intel's "Fast SHA-256 Implementations" for the ROR transformation */ \
         movl  %a, %eax;            \
-        rorl  $13, %ecx;           \
-        rorl  $22, %edx;           \
+        rorl  $9, %eax;            \
+        xorl  %a, %eax;            \
+        rorl  $11, %eax;           \
+        xorl  %a, %eax;            \
         rorl  $2, %eax;            \
-        xorl  %edx, %ecx;          \
-        xorl  %ecx, %eax;          \
         movl  %c, %ecx;            \
         addl  %eax, %h;            \
         movl  %c, %eax;            \
