@@ -1,6 +1,6 @@
 [package]
 name = "sha2-asm"
-version = "0.5.3"
+version = "0.5.4"
 authors = ["RustCrypto Developers"]
 license = "MIT"
 description = "Assembly implementation of SHA-2 compression functions"
