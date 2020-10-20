@@ -9,7 +9,17 @@ functionality please refer to the crates from
 enabled `asm` feature `md5`, `sha-1`, `sha2` and `whirlpool` crates will use
 code from this repository.
 
-### Minimum Supported Rust Version
+## Supported Platforms
+
+All crates are tested on the following platforms:
+
+- Linux (32-bit and 64-bit x86)
+- Windows (64-bit x86, GNU only)
+- ARM64 (except `md5`, which is x86 only)
+
+Windows MSVC builds are known to be broken. See [#17].
+
+## Minimum Supported Rust Version
 
 All crates in this repository support **Rust 1.43** or higher.
 
@@ -31,3 +41,7 @@ dual licensed as above, without any additional terms or conditions.
 [rustc-image]: https://img.shields.io/badge/rustc-1.43+-blue.svg
 [chat-image]: https://img.shields.io/badge/zulip-join_chat-blue.svg
 [chat-link]: https://rustcrypto.zulipchat.com/#narrow/stream/260041-hashes
+
+[//]: # (general links)
+
+[#17]: https://github.com/RustCrypto/asm-hashes/issues/17
