@@ -41,13 +41,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - run: ${{ matrix.deps }}
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: ${{ matrix.toolchain }}
           target: ${{ matrix.target }}
           override: true
+      - run: ${{ matrix.deps }}
       - run: cargo test --target ${{ matrix.target }} --release
 
   # Windows tests
@@ -64,11 +64,11 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: msys2/setup-msys2@v2
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: ${{ matrix.toolchain }}
           target: ${{ matrix.target }}
           override: true
+      - uses: msys2/setup-msys2@v2
       - run: cargo test --target ${{ matrix.target }} --release
