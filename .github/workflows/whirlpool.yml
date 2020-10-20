@@ -1,0 +1,93 @@
+name: whirlpool
+
+on:
+  pull_request:
+    paths:
+      - "whirlpool/**"
+      - "Cargo.*"
+  push:
+    branches: master
+
+defaults:
+  run:
+    working-directory: whirlpool
+
+env:
+  CARGO_INCREMENTAL: 0
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  # Linux tests
+  linux:
+    strategy:
+      matrix:
+        include:
+          # 32-bit Linux/x86
+          - target: i686-unknown-linux-gnu
+            toolchain: 1.43.0 # MSRV
+            deps: sudo apt install gcc-multilib
+          - target: i686-unknown-linux-gnu
+            toolchain: stable
+            deps: sudo apt install gcc-multilib
+
+          # 64-bit Linux/x86_64
+          - target: x86_64-unknown-linux-gnu
+            toolchain: 1.43.0 # MSRV
+            deps: true
+          - target: x86_64-unknown-linux-gnu
+            toolchain: stable
+            deps: true
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          target: ${{ matrix.target }}
+          override: true
+      - run: ${{ matrix.deps }}
+      - run: cargo test --target ${{ matrix.target }} --release
+
+  # macOS tests
+  macos:
+    strategy:
+      matrix:
+        toolchain:
+          - 1.43.0 # MSRV
+          - stable
+
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          target: x86_64-apple-darwin
+          override: true
+      - run: cargo test --release
+
+  # Windows tests
+  windows:
+    strategy:
+      matrix:
+        include:
+          # 64-bit Windows (GNU)
+          - target: x86_64-pc-windows-gnu
+            toolchain: 1.43.0 # MSRV
+          - target: x86_64-pc-windows-gnu
+            toolchain: stable
+
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          target: ${{ matrix.target }}
+          override: true
+      - uses: msys2/setup-msys2@v2
+      - run: cargo test --target ${{ matrix.target }} --release
