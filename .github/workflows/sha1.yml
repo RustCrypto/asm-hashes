@@ -1,0 +1,71 @@
+name: sha1
+
+on:
+  pull_request:
+    paths:
+      - "sha1/**"
+      - "Cargo.*"
+  push:
+    branches: master
+
+env:
+  CARGO_INCREMENTAL: 0
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        include:
+          # 32-bit Linux/x86
+          - target: i686-unknown-linux-gnu
+            platform: ubuntu-latest
+            rust: 1.41.0 # MSRV
+            use_cross: false
+            deps: sudo apt install gcc-multilib
+          - target: i686-unknown-linux-gnu
+            platform: ubuntu-latest
+            rust: stable
+            use_cross: false
+            deps: sudo apt install gcc-multilib
+
+          # 64-bit Linux/x86_64
+          - target: x86_64-unknown-linux-gnu
+            platform: ubuntu-latest
+            rust: 1.41.0 # MSRV
+            use_cross: false
+            deps: true
+          - target: x86_64-unknown-linux-gnu
+            platform: ubuntu-latest
+            rust: stable
+            use_cross: false
+            deps: true
+
+          # ARM64
+          - target: aarch64-unknown-linux-gnu
+            platform: ubuntu-latest
+            rust: 1.41.0 # MSRV
+            use_cross: true
+            deps: true
+          - target: aarch64-unknown-linux-gnu
+            platform: ubuntu-latest
+            rust: stable
+            use_cross: true
+            deps: true
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v1
+      - run: ${{ matrix.deps }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          target: ${{ matrix.target }}
+          override: true
+      - uses: marcopolo/cargo@master
+        with:
+          command: test
+          working-directory: sha1
+          use-cross: ${{ matrix.use_cross }}
+          args: --target ${{ matrix.target }} --release

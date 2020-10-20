@@ -1,0 +1,54 @@
+name: md5
+
+on:
+  pull_request:
+    paths:
+      - "md5/**"
+      - "Cargo.*"
+  push:
+    branches: master
+
+env:
+  CARGO_INCREMENTAL: 0
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        include:
+          # 32-bit Linux/x86
+          - target: i686-unknown-linux-gnu
+            platform: ubuntu-latest
+            toolchain: 1.41.0 # MSRV
+            deps: sudo apt install gcc-multilib
+          - target: i686-unknown-linux-gnu
+            platform: ubuntu-latest
+            toolchain: stable
+            deps: sudo apt install gcc-multilib
+
+          # 64-bit Linux/x86_64
+          - target: x86_64-unknown-linux-gnu
+            platform: ubuntu-latest
+            toolchain: 1.41.0 # MSRV
+            deps: true
+          - target: x86_64-unknown-linux-gnu
+            platform: ubuntu-latest
+            toolchain: stable
+            deps: true
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v1
+      - run: ${{ matrix.deps }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          target: ${{ matrix.target }}
+          override: true
+      - uses: marcopolo/cargo@master
+        with:
+          command: test
+          working-directory: md5
+          args: --target ${{ matrix.target }} --release
