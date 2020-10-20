@@ -1,7 +1,7 @@
 #![no_std]
 #![feature(test)]
-extern crate test;
 extern crate md5_asm;
+extern crate test;
 
 use test::Bencher;
 

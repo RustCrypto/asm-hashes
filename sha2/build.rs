@@ -16,12 +16,9 @@ fn main() {
     };
     if target_arch != "aarch64" {
         cc::Build::new()
-                  .flag("-c")
-                  .file(sha512_path)
-                  .compile("libsha512.a");
+            .flag("-c")
+            .file(sha512_path)
+            .compile("libsha512.a");
     }
-    build256
-              .flag("-c")
-              .file(sha256_path)
-              .compile("libsha256.a");
+    build256.flag("-c").file(sha256_path).compile("libsha256.a");
 }

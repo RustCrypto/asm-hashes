@@ -12,7 +12,7 @@
 #[cfg(not(any(target_arch = "x86_64", target_arch = "x86")))]
 compile_error!("crate can only be used on x86 and x86-64 architectures");
 
-#[link(name="whirlpool", kind="static")]
+#[link(name = "whirlpool", kind = "static")]
 extern "C" {
     fn whirlpool_compress(state: &mut [u8; 64], block: &[u8; 64]);
 }

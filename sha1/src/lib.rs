@@ -12,7 +12,7 @@
 #[cfg(not(any(target_arch = "x86_64", target_arch = "x86", target_arch = "aarch64")))]
 compile_error!("crate can only be used on x86, x86_64 and AArch64 architectures");
 
-#[link(name="sha1", kind="static")]
+#[link(name = "sha1", kind = "static")]
 extern "C" {
     fn sha1_compress(state: &mut [u32; 5], block: &[u8; 64]);
 }
@@ -20,5 +20,7 @@ extern "C" {
 /// Safe wrapper around assembly implementation of SHA-1 compression function
 #[inline]
 pub fn compress(state: &mut [u32; 5], block: &[u8; 64]) {
-    unsafe { sha1_compress(state, block); }
+    unsafe {
+        sha1_compress(state, block);
+    }
 }

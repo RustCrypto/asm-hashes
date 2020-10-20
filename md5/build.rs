@@ -11,7 +11,7 @@ fn main() {
         panic!("Unsupported target architecture");
     };
     cc::Build::new()
-              .flag("-c")
-              .file(asm_path)
-              .compile("libmd5.a");
+        .flag("-c")
+        .file(asm_path)
+        .compile("libmd5.a");
 }
