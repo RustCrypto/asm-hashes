@@ -8,52 +8,37 @@ on:
   push:
     branches: master
 
+defaults:
+  run:
+    working-directory: sha1
+
 env:
   CARGO_INCREMENTAL: 0
   RUSTFLAGS: "-Dwarnings"
 
 jobs:
-  test:
+  # Linux tests
+  linux:
     strategy:
       matrix:
         include:
           # 32-bit Linux/x86
           - target: i686-unknown-linux-gnu
-            platform: ubuntu-latest
-            rust: 1.41.0 # MSRV
-            use_cross: false
+            rust: 1.43.0 # MSRV
             deps: sudo apt install gcc-multilib
           - target: i686-unknown-linux-gnu
-            platform: ubuntu-latest
             rust: stable
-            use_cross: false
             deps: sudo apt install gcc-multilib
 
           # 64-bit Linux/x86_64
           - target: x86_64-unknown-linux-gnu
-            platform: ubuntu-latest
-            rust: 1.41.0 # MSRV
-            use_cross: false
+            rust: 1.43.0 # MSRV
             deps: true
           - target: x86_64-unknown-linux-gnu
-            platform: ubuntu-latest
             rust: stable
-            use_cross: false
             deps: true
 
-          # ARM64
-          - target: aarch64-unknown-linux-gnu
-            platform: ubuntu-latest
-            rust: 1.41.0 # MSRV
-            use_cross: true
-            deps: true
-          - target: aarch64-unknown-linux-gnu
-            platform: ubuntu-latest
-            rust: stable
-            use_cross: true
-            deps: true
-
-    runs-on: ${{ matrix.platform }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - run: ${{ matrix.deps }}
@@ -63,11 +48,51 @@ jobs:
           toolchain: ${{ matrix.rust }}
           target: ${{ matrix.target }}
           override: true
-      # NOTE: using `marcopolo/cargo` fork to support the `working-directory` attribute
-      # See: https://github.com/actions-rs/cargo/pull/59
-      - uses: marcopolo/cargo@master
+      - run: cargo test --target ${{ matrix.target }} --release
+
+  # Windows tests
+  windows:
+    strategy:
+      matrix:
+        include:
+          # 64-bit Windows (GNU)
+          - target: x86_64-pc-windows-gnu
+            toolchain: 1.43.0 # MSRV
+          - target: x86_64-pc-windows-gnu
+            toolchain: stable
+
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: msys2/setup-msys2@v2
+      - uses: actions-rs/toolchain@v1
         with:
-          command: test
-          working-directory: sha1
-          use-cross: ${{ matrix.use_cross }}
-          args: --target ${{ matrix.target }} --release
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          target: ${{ matrix.target }}
+          override: true
+      - run: cargo test --target ${{ matrix.target }} --release
+
+  # Cross-compiled tests
+  cross:
+    strategy:
+      matrix:
+        include:
+          # ARM64
+          - target: aarch64-unknown-linux-gnu
+            rust: 1.43.0 # MSRV
+          - target: aarch64-unknown-linux-gnu
+            rust: stable
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: ${{ matrix.deps }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          target: ${{ matrix.target }}
+          override: true
+      - run: cargo install cross
+      - run: cross test --target ${{ matrix.target }} --release
