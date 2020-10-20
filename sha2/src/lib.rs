@@ -12,7 +12,7 @@
 #[cfg(not(any(target_arch = "x86_64", target_arch = "x86", target_arch = "aarch64")))]
 compile_error!("crate can only be used on x86, x86-64 and aarch64 architectures");
 
-#[link(name="sha256", kind="static")]
+#[link(name = "sha256", kind = "static")]
 extern "C" {
     fn sha256_compress(state: &mut [u32; 8], block: &[u8; 64]);
 }
@@ -24,7 +24,7 @@ pub fn compress256(state: &mut [u32; 8], block: &[u8; 64]) {
 }
 
 #[cfg(not(target_arch = "aarch64"))]
-#[link(name="sha512", kind="static")]
+#[link(name = "sha512", kind = "static")]
 extern "C" {
     fn sha512_compress(state: &mut [u64; 8], block: &[u8; 128]);
 }
