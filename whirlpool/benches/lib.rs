@@ -1,7 +1,7 @@
 #![no_std]
 #![feature(test)]
+
 extern crate test;
-extern crate whirlpool_asm;
 
 use test::Bencher;
 
