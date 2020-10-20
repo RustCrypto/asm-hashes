@@ -1,3 +1,5 @@
+# RustCrypto: ASM hashes [![Project Chat][chat-image]][chat-link]
+
 Assembly implementations of hash functions core functionality based on code from
 [Project Nayuki](https://www.nayuki.io/).
 
@@ -6,3 +8,18 @@ functionality please refer to the crates from
 [RustCrypto/hashes](https://github.com/RustCrypto/hashes) repository. With
 enabled `asm` feature `md5`, `sha-1`, `sha2` and `whirlpool` crates will use
 code from this repository.
+
+## License
+
+All crates licensed under the [MIT license](http://opensource.org/licenses/MIT).
+
+### Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
+dual licensed as above, without any additional terms or conditions.
+
+[//]: # (badges)
+
+[chat-image]: https://img.shields.io/badge/zulip-join_chat-blue.svg
+[chat-link]: https://rustcrypto.zulipchat.com/#narrow/stream/260041-hashes
