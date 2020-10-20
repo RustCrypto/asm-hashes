@@ -1,6 +1,6 @@
 #![no_std]
 #![feature(test)]
-extern crate sha1_asm;
+
 extern crate test;
 
 use test::Bencher;

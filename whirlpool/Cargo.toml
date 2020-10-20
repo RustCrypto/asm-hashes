@@ -8,8 +8,7 @@ documentation = "https://docs.rs/whirlpool-asm"
 repository = "https://github.com/RustCrypto/asm-hashes"
 keywords = ["crypto", "whirlpool", "asm"]
 categories = ["cryptography", "no-std"]
-
-[dependencies]
+edition = "2018"
 
 [build-dependencies]
 cc = "1.0"
