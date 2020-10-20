@@ -48,6 +48,25 @@ jobs:
       - run: ${{ matrix.deps }}
       - run: cargo test --target ${{ matrix.target }} --release
 
+  # macOS tests
+  macos:
+    strategy:
+      matrix:
+        toolchain:
+          - 1.43.0 # MSRV
+          - stable
+
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          target: x86_64-apple-darwin
+          override: true
+      - run: cargo test --release
+
   # Windows tests
   windows:
     strategy:
