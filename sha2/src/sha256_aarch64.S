@@ -30,184 +30,175 @@ sha256_compress:
 	 *       4  x0        state argument
 	 *       4  x1        block argument
 	 *       4  x2        pointer to k
-	 *      16  q0        W0
-	 *      16  q1        W1
-	 *      16  q2        W2
-	 *      16  q3        W3
+	 *      16  q0        state0
+	 *      16  q1        state1
+	 *      16  q2        abef
+	 *      16  q3        cdgh
 	 *      16  q4        k0
 	 *      16  q5        k1
-	 *      16  q6        state0
-	 *      16  q7        state1
-	 *      16  q16       abef
-	 *      16  q17       cdgh
-	 *      16  q18       cdgh0
+	 *      16  q8        W0
+	 *      16  q9        W1
+	 *      16  q10       W2
+	 *      16  q11       W3
 	 */
 
+	// save the lower half of q8-q11
+	stp d8,  d9, [sp,#-32]!
+	stp d10, d11, [sp,#16]
+
 	// Load state in registers
-	ldr       q16, [x0]
-	ldr       q17, [x0, 16]
-	mov       v18.16b, v17.16b
+	ldp       q0, q1, [x0]
+	mov       v2.16b, v0.16b
+	mov       v3.16b, v1.16b
 
 	// Load block in registers
-	ldr       q0, [x1]
-	ldr       q1, [x1, 16]
-	ldr       q2, [x1, 32]
-	ldr       q3, [x1, 48]
+	ld1       {v8.4s-v11.4s}, [x1]
 
 	// TODO: only do that on little endian
-	rev32     v0.16b, v0.16b
-	rev32     v1.16b, v1.16b
-	rev32     v2.16b, v2.16b
-	rev32     v3.16b, v3.16b
+	rev32     v8.16b,  v8.16b
+	rev32     v9.16b,  v9.16b
+	rev32     v10.16b, v10.16b
+	rev32     v11.16b, v11.16b
 
 	// Compute the pointer to k
 	adrp      x2, .K
 	add       x2, x2, :lo12:.K
 
 	// load k
-	ldr       q4, [x2]
-	add       v4.4s, v4.4s, v0.4s
+	ld1       {v16.4s-v19.4s}, [x2], #64
+	ld1       {v20.4s-v23.4s}, [x2], #64
+	ld1       {v24.4s-v27.4s}, [x2], #64
+	ld1       {v28.4s-v31.4s}, [x2]
+	add       v6.4s, v8.4s, v16.4s
 
 	// Rounds 0-3
-	sha256su0 v0.4s, v1.4s
-	ldr       q5, [x2, 16]
-	add       v5.4s, v5.4s, v1.4s
-	mov       v6.16b, v16.16b
-	sha256h   q6, q17, v4.4s
-	sha256h2  q17, q16, v4.4s
-	sha256su1 v0.4s, v2.4s, v3.4s
+	sha256su0 v8.4s, v9.4s
+	mov       v4.16b, v2.16b
+	add       v7.4s, v9.4s, v17.4s
+	sha256h   q2, q3, v6.4s
+	sha256h2  q3, q4, v6.4s
+	sha256su1 v8.4s, v10.4s, v11.4s
 
 	// Rounds 4-7
-	sha256su0 v1.4s, v2.4s
-	ldr       q4, [x2, 32]
-	add       v4.4s, v4.4s, v2.4s
-	mov       v7.16b, v6.16b
-	sha256h   q7, q17, v5.4s
-	sha256h2  q17, q6, v5.4s
-	sha256su1 v1.4s, v3.4s, v0.4s
+	sha256su0 v9.4s, v10.4s
+	mov       v4.16b, v2.16b
+	add       v6.4s, v10.4s, v18.4s
+	sha256h   q2, q3, v7.4s
+	sha256h2  q3, q4, v7.4s
+	sha256su1 v9.4s, v11.4s, v8.4s
 
 	// Rounds 8-11
-	sha256su0 v2.4s, v3.4s
-	ldr       q5, [x2, 48]
-	add       v5.4s, v5.4s, v3.4s
-	mov       v6.16b, v7.16b
-	sha256h   q6, q17, v4.4s
-	sha256h2  q17, q7, v4.4s
-	sha256su1 v2.4s, v0.4s, v1.4s
+	sha256su0 v10.4s, v11.4s
+	mov       v4.16b, v2.16b
+	add       v7.4s, v11.4s, v19.4s
+	sha256h   q2, q3, v6.4s
+	sha256h2  q3, q4, v6.4s
+	sha256su1 v10.4s, v8.4s, v9.4s
 
 	// Rounds 12-15
-	sha256su0 v3.4s, v0.4s
-	ldr       q4, [x2, 64]
-	add       v4.4s, v4.4s, v0.4s
-	mov       v7.16b, v6.16b
-	sha256h   q7, q17, v5.4s
-	sha256h2  q17, q6, v5.4s
-	sha256su1 v3.4s, v1.4s, v2.4s
+	sha256su0 v11.4s, v8.4s
+	mov       v4.16b, v2.16b
+	add       v6.4s, v8.4s, v20.4s
+	sha256h   q2, q3, v7.4s
+	sha256h2  q3, q4, v7.4s
+	sha256su1 v11.4s, v9.4s, v10.4s
 
 	// Rounds 16-19
-	sha256su0 v0.4s, v1.4s
-	ldr       q5, [x2, 80]
-	add       v5.4s, v5.4s, v1.4s
-	mov       v6.16b, v7.16b
-	sha256h   q6, q17, v4.4s
-	sha256h2  q17, q7, v4.4s
-	sha256su1 v0.4s, v2.4s, v3.4s
+	sha256su0 v8.4s, v9.4s
+	mov       v4.16b, v2.16b
+	add       v7.4s, v9.4s, v21.4s
+	sha256h   q2, q3, v6.4s
+	sha256h2  q3, q4, v6.4s
+	sha256su1 v8.4s, v10.4s, v11.4s
 
 	// Rounds 20-23
-	sha256su0 v1.4s, v2.4s
-	ldr       q4, [x2, 96]
-	add       v4.4s, v4.4s, v2.4s
-	mov       v7.16b, v6.16b
-	sha256h   q7, q17, v5.4s
-	sha256h2  q17, q6, v5.4s
-	sha256su1 v1.4s, v3.4s, v0.4s
+	sha256su0 v9.4s, v10.4s
+	mov       v4.16b, v2.16b
+	add       v6.4s, v10.4s, v22.4s
+	sha256h   q2, q3, v7.4s
+	sha256h2  q3, q4, v7.4s
+	sha256su1 v9.4s, v11.4s, v8.4s
 
 	// Rounds 24-27
-	sha256su0 v2.4s, v3.4s
-	ldr       q5, [x2, 112]
-	add       v5.4s, v5.4s, v3.4s
-	mov       v6.16b, v7.16b
-	sha256h   q6, q17, v4.4s
-	sha256h2  q17, q7, v4.4s
-	sha256su1 v2.4s, v0.4s, v1.4s
+	sha256su0 v10.4s, v11.4s
+	mov       v4.16b, v2.16b
+	add       v7.4s, v11.4s, v23.4s
+	sha256h   q2, q3, v6.4s
+	sha256h2  q3, q4, v6.4s
+	sha256su1 v10.4s, v8.4s, v9.4s
 
 	// Rounds 28-31
-	sha256su0 v3.4s, v0.4s
-	ldr       q4, [x2, 128]
-	add       v4.4s, v4.4s, v0.4s
-	mov       v7.16b, v6.16b
-	sha256h   q7, q17, v5.4s
-	sha256h2  q17, q6, v5.4s
-	sha256su1 v3.4s, v1.4s, v2.4s
+	sha256su0 v11.4s, v8.4s
+	mov       v4.16b, v2.16b
+	add       v6.4s, v8.4s, v24.4s
+	sha256h   q2, q3, v7.4s
+	sha256h2  q3, q4, v7.4s
+	sha256su1 v11.4s, v9.4s, v10.4s
 
 	// Rounds 32-35
-	sha256su0 v0.4s, v1.4s
-	ldr       q5, [x2, 144]
-	add       v5.4s, v5.4s, v1.4s
-	mov       v6.16b, v7.16b
-	sha256h   q6, q17, v4.4s
-	sha256h2  q17, q7, v4.4s
-	sha256su1 v0.4s, v2.4s, v3.4s
+	sha256su0 v8.4s, v9.4s
+	mov       v4.16b, v2.16b
+	add       v7.4s, v9.4s, v25.4s
+	sha256h   q2, q3, v6.4s
+	sha256h2  q3, q4, v6.4s
+	sha256su1 v8.4s, v10.4s, v11.4s
 
 	// Rounds 36-39
-	sha256su0 v1.4s, v2.4s
-	ldr       q4, [x2, 160]
-	add       v4.4s, v4.4s, v2.4s
-	mov       v7.16b, v6.16b
-	sha256h   q7, q17, v5.4s
-	sha256h2  q17, q6, v5.4s
-	sha256su1 v1.4s, v3.4s, v0.4s
+	sha256su0 v9.4s, v10.4s
+	mov       v4.16b, v2.16b
+	add       v6.4s, v10.4s, v26.4s
+	sha256h   q2, q3, v7.4s
+	sha256h2  q3, q4, v7.4s
+	sha256su1 v9.4s, v11.4s, v8.4s
 
 	// Rounds 40-43
-	sha256su0 v2.4s, v3.4s
-	ldr       q5, [x2, 176]
-	add       v5.4s, v5.4s, v3.4s
-	mov       v6.16b, v7.16b
-	sha256h   q6, q17, v4.4s
-	sha256h2  q17, q7, v4.4s
-	sha256su1 v2.4s, v0.4s, v1.4s
+	sha256su0 v10.4s, v11.4s
+	mov       v4.16b, v2.16b
+	add       v7.4s, v11.4s, v27.4s
+	sha256h   q2, q3, v6.4s
+	sha256h2  q3, q4, v6.4s
+	sha256su1 v10.4s, v8.4s, v9.4s
 
 	// Rounds 44-47
-	sha256su0 v3.4s, v0.4s
-	ldr       q4, [x2, 192]
-	add       v4.4s, v4.4s, v0.4s
-	mov       v7.16b, v6.16b
-	sha256h   q7, q17, v5.4s
-	sha256h2  q17, q6, v5.4s
-	sha256su1 v3.4s, v1.4s, v2.4s
+	sha256su0 v11.4s, v8.4s
+	mov       v4.16b, v2.16b
+	add       v6.4s, v8.4s, v28.4s
+	sha256h   q2, q3, v7.4s
+	sha256h2  q3, q4, v7.4s
+	sha256su1 v11.4s, v9.4s, v10.4s
 
 	// Rounds 48-51
-	ldr       q5, [x2, 208]
-	add       v5.4s, v5.4s, v1.4s
-	mov       v6.16b, v7.16b
-	sha256h   q6, q17, v4.4s
-	sha256h2  q17, q7, v4.4s
+	mov       v4.16b, v2.16b
+	add       v7.4s, v9.4s, v29.4s
+	sha256h   q2, q3, v6.4s
+	sha256h2  q3, q4, v6.4s
 
 	// Rounds 52-55
-	ldr       q4, [x2, 224]
-	add       v4.4s, v4.4s, v2.4s
-	mov       v7.16b, v6.16b
-	sha256h   q7, q17, v5.4s
-	sha256h2  q17, q6, v5.4s
+	mov       v4.16b, v2.16b
+	add       v6.4s, v10.4s, v30.4s
+	sha256h   q2, q3, v7.4s
+	sha256h2  q3, q4, v7.4s
 
 	// Rounds 56-59
-	ldr       q5, [x2, 240]
-	add       v5.4s, v5.4s, v3.4s
-	mov       v6.16b, v7.16b
-	sha256h   q6, q17, v4.4s
-	sha256h2  q17, q7, v4.4s
+	mov       v4.16b, v2.16b
+	add       v7.4s, v11.4s, v31.4s
+	sha256h   q2, q3, v6.4s
+	sha256h2  q3, q4, v6.4s
 
 	// Rounds 60-63
-	mov       v7.16b, v6.16b
-	sha256h   q7, q17, v5.4s
-	sha256h2  q17, q6, v5.4s
+	mov       v4.16b, v2.16b
+	sha256h   q2, q3, v7.4s
+	sha256h2  q3, q4, v7.4s
 
 	// Update state
-	add      v16.4s, v16.4s, v7.4s
-	str      q16, [x0]
-	add      v18.4s, v18.4s, v17.4s
-	str      q18, [x0, 16]
+	add       v0.4s, v0.4s, v2.4s
+	add       v1.4s, v1.4s, v3.4s
+	stp       q0, q1, [x0]
 
+	// restore
+	ldp       d10, d11, [sp,#16]
+	ldp       d8,  d9, [sp],#32
+ 
 	ret
 .align 4
 .K:
