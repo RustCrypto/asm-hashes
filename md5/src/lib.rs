@@ -21,6 +21,8 @@ extern "C" {
 #[inline]
 pub fn compress(state: &mut [u32; 4], blocks: &[[u8; 64]]) {
     for block in blocks {
-        unsafe { md5_compress(state, block); }
+        unsafe {
+            md5_compress(state, block);
+        }
     }
 }

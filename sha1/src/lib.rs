@@ -21,6 +21,8 @@ extern "C" {
 #[inline]
 pub fn compress(state: &mut [u32; 5], blocks: &[[u8; 64]]) {
     for block in blocks {
-        unsafe { sha1_compress(state, block); }
+        unsafe {
+            sha1_compress(state, block);
+        }
     }
 }
