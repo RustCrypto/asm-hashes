@@ -9,28 +9,28 @@ checksum = "ed67cbde08356238e75fc4656be4749481eeffb09e19f320a25237d5221c985d"
 
 [[package]]
 name = "md5-asm"
-version = "0.4.3"
+version = "0.5.0"
 dependencies = [
  "cc",
 ]
 
 [[package]]
 name = "sha1-asm"
-version = "0.4.4"
+version = "0.5.0"
 dependencies = [
  "cc",
 ]
 
 [[package]]
 name = "sha2-asm"
-version = "0.5.4"
+version = "0.6.0"
 dependencies = [
  "cc",
 ]
 
 [[package]]
 name = "whirlpool-asm"
-version = "0.5.2"
+version = "0.6.0"
 dependencies = [
  "cc",
 ]

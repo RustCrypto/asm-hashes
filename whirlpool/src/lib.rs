@@ -1,12 +1,12 @@
-//! Assembly implementation of [Whirlpool][1] compression function.
+//! Assembly implementation of the [Whirlpool] compression function.
 //!
-//! For full Whirlpool hash function with this implementation of compression
-//! function use [whirlpool](https://crates.io/crates/whirlpool) crate with
-//! the enabled "asm" feature.
+//! This crate is not intended for direct use, most users should
+//! prefer the [`whirlpool`] crate with enabled `asm` feature instead.
 //!
 //! Only x86 and x86-64 architectures are currently supported.
 //!
-//! [1]: https://en.wikipedia.org/wiki/Whirlpool_(cryptography)
+//! [Whirlpool]: https://en.wikipedia.org/wiki/Whirlpool_(cryptography)
+//! [`whirlpool`]: https://crates.io/crates/whirlpool
 
 #![no_std]
 #[cfg(not(any(target_arch = "x86_64", target_arch = "x86")))]
@@ -14,11 +14,13 @@ compile_error!("crate can only be used on x86 and x86-64 architectures");
 
 #[link(name = "whirlpool", kind = "static")]
 extern "C" {
-    fn whirlpool_compress(state: &mut [u8; 64], block: &[u8; 64]);
+    fn whirlpool_compress(state: &mut [u64; 8], block: &[u8; 64]);
 }
 
-/// Safe wrapper around assembly implementation of Whirlpool compression function
+/// Safe wrapper around assembly implementation of the Whirlpool compression function
 #[inline]
-pub fn compress(state: &mut [u8; 64], block: &[u8; 64]) {
-    unsafe { whirlpool_compress(state, block) }
+pub fn compress(state: &mut [u64; 8], blocks: &[[u8; 64]]) {
+    for block in blocks {
+        unsafe { whirlpool_compress(state, block) }
+    }
 }

@@ -1,12 +1,12 @@
-//! Assembly implementation of [SHA-1][1] compression function.
+//! Assembly implementation of the [SHA-1] compression function.
 //!
-//! For full SHA-1 hash function with this implementation of compression function
-//! use [sha-1](https://crates.io/crates/sha-1) crate with
-//! the enabled "asm" feature.
+//! This crate is not intended for direct use, most users should
+//! prefer the [`sha-1`] crate with enabled `asm` feature instead.
 //!
-//! Only x86 and x86-64 architectures are currently supported.
+//! Only x86, x86-64, and AArch64 architectures are currently supported.
 //!
-//! [1]: https://en.wikipedia.org/wiki/SHA-1
+//! [SHA-1]: https://en.wikipedia.org/wiki/SHA-1
+//! [`sha-1`]: https://crates.io/crates/sha-1
 
 #![no_std]
 #[cfg(not(any(target_arch = "x86_64", target_arch = "x86", target_arch = "aarch64")))]
@@ -19,8 +19,8 @@ extern "C" {
 
 /// Safe wrapper around assembly implementation of SHA-1 compression function
 #[inline]
-pub fn compress(state: &mut [u32; 5], block: &[u8; 64]) {
-    unsafe {
-        sha1_compress(state, block);
+pub fn compress(state: &mut [u32; 5], blocks: &[[u8; 64]]) {
+    for block in blocks {
+        unsafe { sha1_compress(state, block); }
     }
 }

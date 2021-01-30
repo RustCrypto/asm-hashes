@@ -1,12 +1,12 @@
-//! Assembly implementation of [MD5][1] compression function.
+//! Assembly implementation of the [MD5] compression function.
 //!
-//! For full MD5 hash function with this implementation of compression function
-//! use [md-5](https://crates.io/crates/md-5) crate with
-//! the enabled "asm" feature.
+//! This crate is not intended for direct use, most users should
+//! prefer the [`md5`] crate with enabled `asm` feature instead.
 //!
 //! Only x86 and x86-64 architectures are currently supported.
 //!
-//! [1]: https://en.wikipedia.org/wiki/MD5
+//! [MD5]: https://en.wikipedia.org/wiki/MD5
+//! [`md5`]: https://crates.io/crates/md5
 
 #![no_std]
 #[cfg(not(any(target_arch = "x86_64", target_arch = "x86")))]
@@ -19,8 +19,8 @@ extern "C" {
 
 /// Safe wrapper around assembly implementation of MD5 compression function
 #[inline]
-pub fn compress(state: &mut [u32; 4], block: &[u8; 64]) {
-    unsafe {
-        md5_compress(state, block);
+pub fn compress(state: &mut [u32; 4], blocks: &[[u8; 64]]) {
+    for block in blocks {
+        unsafe { md5_compress(state, block); }
     }
 }
