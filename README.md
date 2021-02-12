@@ -1,4 +1,4 @@
-# RustCrypto: ASM hashes ![Rust Version][rustc-image] [![Project Chat][chat-image]][chat-link]
+# RustCrypto: ASM hashes ![Rust Version][rustc-image] [![Project Chat][chat-image]][chat-link] [![dependency status][deps-image]][deps-link]
 
 Assembly implementations of hash functions core functionality based on code from
 [Project Nayuki](https://www.nayuki.io/).
@@ -41,6 +41,8 @@ dual licensed as above, without any additional terms or conditions.
 [rustc-image]: https://img.shields.io/badge/rustc-1.43+-blue.svg
 [chat-image]: https://img.shields.io/badge/zulip-join_chat-blue.svg
 [chat-link]: https://rustcrypto.zulipchat.com/#narrow/stream/260041-hashes
+[deps-image]: https://deps.rs/repo/github/RustCrypto/asm-hashes/status.svg
+[deps-link]: https://deps.rs/repo/github/RustCrypto/asm-hashes
 
 [//]: # (general links)
 
