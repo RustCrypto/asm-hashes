@@ -14,15 +14,17 @@
 compile_error!("crate can only be used on x86, x86-64 and aarch64 architectures");
 
 #[link(name = "sha256", kind = "static")]
+#[allow(dead_code)]
 extern "C" {
     fn sha256_compress(state: &mut [u32; 8], block: &[u8; 64]);
+    fn sha256_transform_rorx(state: &mut [u32; 8], block: *const [u8; 64], num_blocks: usize);
 }
 
 /// Safe wrapper around assembly implementation of SHA256 compression function
 #[inline]
 pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
-    for block in blocks {
-        unsafe { sha256_compress(state, block) }
+    if !blocks.is_empty() {
+        unsafe { sha256_transform_rorx(state, blocks.as_ptr(), blocks.len()) }
     }
 }
 

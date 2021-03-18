@@ -5,7 +5,7 @@ fn main() {
     let (sha256_path, sha512_path) = if target_arch == "x86" {
         ("src/sha256_x86.S", "src/sha512_x86.S")
     } else if target_arch == "x86_64" {
-        ("src/sha256_x64.S", "src/sha512_x64.S")
+        ("src/sha256-avx2-asm.S", "src/sha512_x64.S")
     } else if target_arch == "aarch64" {
         build256.flag("-march=armv8-a+crypto");
         ("src/sha256_aarch64.S", "")
