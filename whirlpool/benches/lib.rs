@@ -7,8 +7,8 @@ use test::Bencher;
 
 #[bench]
 fn bench_compress(b: &mut Bencher) {
-    let mut state = [0u8; 64];
-    let data = [0u8; 64];
+    let mut state = [0u64; 8];
+    let data = [[0u8; 64]];
 
     b.iter(|| {
         whirlpool_asm::compress(&mut state, &data);
