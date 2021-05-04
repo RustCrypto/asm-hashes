@@ -1,6 +1,6 @@
 fn main() {
     use std::env;
-    
+
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap_or_default();
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap_or_default();
 
@@ -15,10 +15,10 @@ fn main() {
     } else if target_arch == "aarch64" {
         build256.flag("-march=armv8-a+crypto");
         ("src/sha256_aarch64.S", "")
-
     } else {
         panic!("Unsupported target architecture");
     };
+
     if target_arch != "aarch64" {
         cc::Build::new()
             .flag("-c")
