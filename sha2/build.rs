@@ -20,7 +20,7 @@ fn main() {
         if features.contains("aes") {
             ("src/sha256_x64_ni.S", "src/sha512_x64.S")
         } else if features.contains("avx2") {
-            ("src/sha256_x64_avx2.S", "src/sha512_x64.S")
+            ("src/sha256_x64_avx2.S", "src/sha512_x64_avx2.S")
         } else {
             ("src/sha256_x64.S", "src/sha512_x64.S")
         }

@@ -54,14 +54,27 @@ pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
 #[cfg(not(target_arch = "aarch64"))]
 #[link(name = "sha512", kind = "static")]
 extern "C" {
+    #[cfg(not(target_feature = "avx2"))]
     fn sha512_compress(state: &mut [u64; 8], block: &[u8; 128]);
+    #[cfg(target_feature = "avx2")]
+    fn sha512_transform_rorx(state: &mut [u64; 8], block: *const [u8; 128], num_blocks: usize);
 }
 
 /// Safe wrapper around assembly implementation of SHA512 compression function
 ///
 /// This function is available only on x86 and x86-64 targets.
-#[cfg(not(target_arch = "aarch64"))]
 #[inline]
+#[cfg(not(target_arch = "aarch64"))]
+#[cfg(target_feature = "avx2")]
+pub fn compress512(state: &mut [u64; 8], blocks: &[[u8; 128]]) {
+    if !blocks.is_empty() {
+        unsafe { sha512_transform_rorx(state, blocks.as_ptr(), blocks.len()) }
+    }
+}
+
+#[inline]
+#[cfg(not(target_arch = "aarch64"))]
+#[cfg(not(target_feature = "avx2"))]
 pub fn compress512(state: &mut [u64; 8], blocks: &[[u8; 128]]) {
     for block in blocks {
         unsafe { sha512_compress(state, block) }
