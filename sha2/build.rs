@@ -5,7 +5,6 @@ fn main() {
 
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap_or_default();
     let target_vendor = env::var("CARGO_CFG_TARGET_VENDOR").unwrap_or_default();
-    // panic!("{}", env::var("CARGO_CFG_TARGET_ARCH").unwrap());
     let features: HashSet<String> = env::var("CARGO_CFG_TARGET_FEATURE")
         .unwrap_or_default()
         .split(',')
