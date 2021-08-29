@@ -1,40 +1,28 @@
-use std::collections::HashSet;
-
 fn main() {
     use std::env;
 
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap_or_default();
     let target_vendor = env::var("CARGO_CFG_TARGET_VENDOR").unwrap_or_default();
-    let features: HashSet<String> = env::var("CARGO_CFG_TARGET_FEATURE")
-        .unwrap_or_default()
-        .split(',')
-        .map(|x| x.to_string())
-        .collect();
 
     let mut build256 = cc::Build::new();
     let (sha256_path, sha512_path) = if target_arch == "x86" {
-        ("src/sha256_x86.S", "src/sha512_x86.S")
+        (["src/sha256_x86.S"].to_vec(), ["src/sha512_x86.S"].to_vec())
     } else if target_arch == "x86_64" {
-        let sha512 = if features.contains("avx2") {
-            "src/sha512_x64_avx2.S"
-        } else {
-            "src/sha512_x64.S"
-        };
-        // Prioritizing aes-ni, cause it's fastest
-        let sha256 = if features.contains("aes") {
-            "src/sha256_x64_ni.S"
-        } else if features.contains("avx2") {
-            "src/sha256_x64_avx2.S"
-        } else {
-            "src/sha256_x64.S"
-        };
+        let sha512 = ["src/sha512_x64_avx2.S", "src/sha512_x64.S"].to_vec();
+        // Prioritizing sha-ni, cause it's fastest
+        let sha256 = [
+            "src/sha256_x64_ni.S",
+            "src/sha256_x64_avx2.S",
+            "src/sha256_x64.S",
+        ]
+        .to_vec();
         (sha256, sha512)
     } else if target_arch == "aarch64" && target_vendor == "apple" {
         build256.flag("-march=armv8-a+crypto");
-        ("src/sha256_aarch64_apple.S", "")
+        (["src/sha256_aarch64_apple.S"].to_vec(), [""].to_vec())
     } else if target_arch == "aarch64" {
         build256.flag("-march=armv8-a+crypto");
-        ("src/sha256_aarch64.S", "")
+        (["src/sha256_aarch64.S"].to_vec(), [""].to_vec())
     } else {
         panic!("Unsupported target architecture");
     };
@@ -42,8 +30,11 @@ fn main() {
     if target_arch != "aarch64" {
         cc::Build::new()
             .flag("-c")
-            .file(sha512_path)
+            .files(sha512_path)
             .compile("libsha512.a");
     }
-    build256.flag("-c").file(sha256_path).compile("libsha256.a");
+    build256
+        .flag("-c")
+        .files(sha256_path)
+        .compile("libsha256.a");
 }
