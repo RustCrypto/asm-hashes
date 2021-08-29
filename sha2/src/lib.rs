@@ -14,10 +14,35 @@
 compile_error!("crate can only be used on x86, x86-64 and aarch64 architectures");
 
 #[link(name = "sha256", kind = "static")]
+#[allow(dead_code)]
 extern "C" {
     fn sha256_compress(state: &mut [u32; 8], block: &[u8; 64]);
+    #[cfg(target_feature = "avx2")]
+    fn sha256_transform_rorx(state: &mut [u32; 8], block: *const [u8; 64], num_blocks: usize);
+    #[cfg(target_feature = "aes")]
+    fn sha256_ni_transform(digest: &mut [u32; 8], data: *const [u8; 64], nblk: u64);
 }
 
+#[cfg(not(target_feature = "aes"))]
+#[cfg(target_feature = "avx2")]
+#[inline]
+pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+    if !blocks.is_empty() {
+        unsafe { sha256_transform_rorx(state, blocks.as_ptr(), blocks.len()) }
+    }
+}
+
+#[cfg(target_feature = "aes")]
+#[cfg(not(target_feature = "avx2"))]
+#[inline]
+pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+    if !blocks.is_empty() {
+        unsafe { sha256_ni_transform(state, blocks.as_ptr(), blocks.len() as u64) }
+    }
+}
+
+#[cfg(not(target_feature = "aes"))]
+#[cfg(not(target_feature = "avx2"))]
 /// Safe wrapper around assembly implementation of SHA256 compression function
 #[inline]
 pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
