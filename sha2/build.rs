@@ -16,14 +16,20 @@ fn main() {
     let (sha256_path, sha512_path) = if target_arch == "x86" {
         ("src/sha256_x86.S", "src/sha512_x86.S")
     } else if target_arch == "x86_64" {
-        // using aes-ni, cause it's fastest
-        if features.contains("aes") {
-            ("src/sha256_x64_ni.S", "src/sha512_x64.S")
-        } else if features.contains("avx2") {
-            ("src/sha256_x64_avx2.S", "src/sha512_x64_avx2.S")
+        let sha512 = if features.contains("avx2") {
+            "src/sha512_x64_avx2.S"
         } else {
-            ("src/sha256_x64.S", "src/sha512_x64.S")
-        }
+            "src/sha512_x64.S"
+        };
+        // Prioritizing aes-ni, cause it's fastest
+        let sha256 = if features.contains("aes") {
+            "src/sha256_x64_ni.S"
+        } else if features.contains("avx2") {
+            "src/sha256_x64_avx2.S"
+        } else {
+            "src/sha256_x64.S"
+        };
+        (sha256, sha512)
     } else if target_arch == "aarch64" && target_vendor == "apple" {
         build256.flag("-march=armv8-a+crypto");
         ("src/sha256_aarch64_apple.S", "")

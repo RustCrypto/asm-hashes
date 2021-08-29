@@ -23,31 +23,32 @@ extern "C" {
     fn sha256_ni_transform(digest: &mut [u32; 8], data: *const [u8; 64], nblk: u64);
 }
 
-#[cfg(not(target_feature = "aes"))]
-#[cfg(target_feature = "avx2")]
-#[inline]
-pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
-    if !blocks.is_empty() {
-        unsafe { sha256_transform_rorx(state, blocks.as_ptr(), blocks.len()) }
+cfg_if::cfg_if! {
+    if #[cfg(target_feature = "aes")]
+    {
+        #[inline]
+        pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+            if !blocks.is_empty() {
+                unsafe { sha256_ni_transform(state, blocks.as_ptr(), blocks.len() as u64) }
+            }
+        }
     }
-}
-
-#[cfg(target_feature = "aes")]
-#[cfg(not(target_feature = "avx2"))]
-#[inline]
-pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
-    if !blocks.is_empty() {
-        unsafe { sha256_ni_transform(state, blocks.as_ptr(), blocks.len() as u64) }
+    else if #[cfg(target_feature = "avx2")]
+    {
+        #[inline]
+        pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+            if !blocks.is_empty() {
+                unsafe { sha256_transform_rorx(state, blocks.as_ptr(), blocks.len()) }
+            }
+        }
     }
-}
-
-#[cfg(not(target_feature = "aes"))]
-#[cfg(not(target_feature = "avx2"))]
-/// Safe wrapper around assembly implementation of SHA256 compression function
-#[inline]
-pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
-    for block in blocks {
-        unsafe { sha256_compress(state, block) }
+    else{
+        #[inline]
+        pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+            for block in blocks {
+                unsafe { sha256_compress(state, block) }
+            }
+        }
     }
 }
 
