@@ -10,12 +10,7 @@ fn main() {
     } else if target_arch == "x86_64" {
         if target_os == "linux" {
             (
-                [
-                    "src/sha256_x64_ni.S",
-                    "src/sha256_x64_avx2.S",
-                    "src/sha256_x64.S",
-                ]
-                .iter(),
+                ["src/sha256_x64_avx2.S", "src/sha256_x64.S"].iter(),
                 ["src/sha512_x64_avx2.S", "src/sha512_x64.S"].iter(),
             )
         } else {
