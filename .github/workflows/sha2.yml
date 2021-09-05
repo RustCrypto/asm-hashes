@@ -96,8 +96,8 @@ jobs:
       matrix:
         include:
           # ARM64
-          - target: aarch64-unknown-linux-gnu
-            rust: 1.43.0 # MSRV
+          #- target: aarch64-unknown-linux-gnu
+          #  rust: 1.43.0 # MSRV
           - target: aarch64-unknown-linux-gnu
             rust: stable
 
