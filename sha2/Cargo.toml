@@ -11,7 +11,7 @@ categories = ["cryptography", "no-std"]
 edition = "2018"
 
 [dependencies]
-cpufeatures = "0.2.1"
+cpufeatures = "0.2"
 
 [build-dependencies]
 cc = "1.0"

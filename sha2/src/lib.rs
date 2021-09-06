@@ -43,7 +43,7 @@ pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
 #[link(name = "sha512", kind = "static")]
 extern "C" {
     fn sha512_compress(state: &mut [u64; 8], block: &[u8; 128]);
-    fn sha512_transform_rorx(state: &mut [u64; 8], block: *const [u8; 128], num_blocks: u64);
+    fn sha512_transform_rorx(state: &mut [u64; 8], block: *const [u8; 128], num_blocks: usize);
 }
 
 /// Safe wrapper around assembly implementation of SHA512 compression function
@@ -55,7 +55,7 @@ pub fn compress512(state: &mut [u64; 8], blocks: &[[u8; 128]]) {
     let token: cpuid_avx2::InitToken = cpuid_avx2::init();
     if token.get() {
         if !blocks.is_empty() {
-            unsafe { sha512_transform_rorx(state, blocks.as_ptr(), blocks.len() as u64) }
+            unsafe { sha512_transform_rorx(state, blocks.as_ptr(), blocks.len()) }
         }
     } else {
         for block in blocks {
