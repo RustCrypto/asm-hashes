@@ -13,24 +13,23 @@
 #[cfg(not(any(target_arch = "x86_64", target_arch = "x86", target_arch = "aarch64")))]
 compile_error!("crate can only be used on x86, x86-64 and aarch64 architectures");
 
+#[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
 cpufeatures::new!(cpuid_avx2, "avx2");
 
 #[link(name = "sha256", kind = "static")]
 #[allow(dead_code)]
 extern "C" {
     fn sha256_compress(state: &mut [u32; 8], block: &[u8; 64]);
-    fn sha256_transform_rorx(state: &mut [u32; 8], block: *const [u8; 64], num_blocks: u64);
+    fn sha256_transform_rorx(state: &mut [u32; 8], block: *const [u8; 64], num_blocks: usize);
 }
 
 /// Safe wrapper around assembly implementation of SHA256 compression function
 ///
 #[inline]
 pub fn compress256(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
-    let token: cpuid_avx2::InitToken = cpuid_avx2::init();
-
-    if token.get() {
+    if cpuid_avx2::get() {
         if !blocks.is_empty() {
-            unsafe { sha256_transform_rorx(state, blocks.as_ptr(), blocks.len() as u64) }
+            unsafe { sha256_transform_rorx(state, blocks.as_ptr(), blocks.len()) }
         }
     } else {
         for block in blocks {
@@ -52,8 +51,7 @@ extern "C" {
 #[cfg(not(target_arch = "aarch64"))]
 #[inline]
 pub fn compress512(state: &mut [u64; 8], blocks: &[[u8; 128]]) {
-    let token: cpuid_avx2::InitToken = cpuid_avx2::init();
-    if token.get() {
+    if cpuid_avx2::get() {
         if !blocks.is_empty() {
             unsafe { sha512_transform_rorx(state, blocks.as_ptr(), blocks.len()) }
         }
