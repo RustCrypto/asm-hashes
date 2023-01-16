@@ -4,6 +4,12 @@
 version = 3
 
 [[package]]
+name = "asm_block"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "53343f5bc86a28984a9aaeafe1ef39a68cbaf2cf6a26102bac9d24e55c9c7ab4"
+
+[[package]]
 name = "cc"
 version = "1.0.73"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -13,7 +19,7 @@ checksum = "2fff2a6927b3bb87f9595d67196a70493f627687a71d87a0d692242c33f58c11"
 name = "md5-asm"
 version = "0.5.0"
 dependencies = [
- "cc",
+ "asm_block",
 ]
 
 [[package]]

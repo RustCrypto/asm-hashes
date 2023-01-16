@@ -9,6 +9,7 @@ repository = "https://github.com/RustCrypto/asm-hashes"
 keywords = ["crypto", "md5", "asm"]
 categories = ["cryptography", "no-std"]
 edition = "2018"
+rust-version = "1.59"
 
-[build-dependencies]
-cc = "1.0"
+[dependencies]
+asm_block = "0.1.2"
