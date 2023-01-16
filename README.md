@@ -9,6 +9,13 @@ functionality please refer to the crates from
 enabled `asm` feature `md5`, `sha-1`, `sha2` and `whirlpool` crates will use
 code from this repository.
 
+## NOTE: this repo is in maintenance mode only
+
+Now that inline assembly is stable (as of Rust 1.59), assembly should be added
+directly to the relevant crates at <https://github.com/RustCrypto/hashes>.
+
+For more information, see [#45].
+
 ## Supported Platforms
 
 All crates are tested on the following platforms:
@@ -47,3 +54,4 @@ dual licensed as above, without any additional terms or conditions.
 [//]: # (general links)
 
 [#17]: https://github.com/RustCrypto/asm-hashes/issues/17
+[#45]: https://github.com/RustCrypto/asm-hashes/issues/45
