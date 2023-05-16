@@ -21,10 +21,8 @@ For more information, see [#45].
 All crates are tested on the following platforms:
 
 - Linux (32-bit and 64-bit x86)
-- Windows (64-bit x86, GNU only)
+- Windows (64-bit x86)
 - ARM64 (except `md5`, which is x86 only)
-
-Windows MSVC builds are known to be broken. See [#17].
 
 ## Minimum Supported Rust Version
 
