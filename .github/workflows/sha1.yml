@@ -53,7 +53,7 @@ jobs:
     strategy:
       matrix:
         toolchain:
-          - 1.43.0 # MSRV
+          - 1.54.0 # MSRV
           - stable
 
     runs-on: macos-latest

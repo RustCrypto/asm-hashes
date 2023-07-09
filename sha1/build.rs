@@ -17,5 +17,5 @@ fn main() {
     if target_arch == "aarch64" {
         build.flag("-march=armv8-a+crypto");
     }
-    build.flag("-c").file(asm_path).compile("libsha1.a");
+    build.flag("-c").file(asm_path).compile("sha1");
 }

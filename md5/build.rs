@@ -8,8 +8,5 @@ fn main() {
     } else {
         panic!("Unsupported target architecture");
     };
-    cc::Build::new()
-        .flag("-c")
-        .file(asm_path)
-        .compile("libmd5.a");
+    cc::Build::new().flag("-c").file(asm_path).compile("md5");
 }

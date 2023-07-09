@@ -1,6 +1,6 @@
-fn main() {
-    use std::env;
+use std::env;
 
+fn main() {
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap_or_default();
     let target_vendor = env::var("CARGO_CFG_TARGET_VENDOR").unwrap_or_default();
 
@@ -25,5 +25,5 @@ fn main() {
             .file(sha512_path)
             .compile("libsha512.a");
     }
-    build256.flag("-c").file(sha256_path).compile("libsha256.a");
+    build256.flag("-c").file(sha256_path).compile("sha256");
 }
