@@ -55,7 +55,7 @@ jobs:
     strategy:
       matrix:
         toolchain:
-          - 1.43.0 # MSRV
+          - 1.54.0 # MSRV
           - stable
 
     runs-on: macos-latest
@@ -74,8 +74,13 @@ jobs:
         include:
           # 64-bit Windows (GNU)
           - target: x86_64-pc-windows-gnu
-            toolchain: 1.43.0 # MSRV
+            toolchain: 1.48.0 # MSRV
           - target: x86_64-pc-windows-gnu
+            toolchain: stable
+          # 32-bit Windows (GNU)
+          - target: i686-pc-windows-gnu
+            toolchain: 1.48.0 # MSRV
+          - target: i686-pc-windows-gnu
             toolchain: stable
 
     runs-on: windows-latest
@@ -86,4 +91,9 @@ jobs:
           toolchain: ${{ matrix.toolchain }}
           targets: ${{ matrix.target }}
       - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW${{ startsWith(matrix.target, 'i686-') && '32' || '64' }}
+          pacboy: cc:p
+          path-type: inherit
       - run: cargo test --target ${{ matrix.target }} --release
+        shell: msys2 {0}
