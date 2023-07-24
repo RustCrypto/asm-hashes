@@ -23,7 +23,7 @@
 
 
 /* void md5_compress(uint32_t state[4], const uint8_t block[64]) */
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(_WIN32)
 .globl _md5_compress
 _md5_compress:
 #else

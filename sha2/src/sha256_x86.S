@@ -23,7 +23,7 @@
 
 
 /* void sha256_compress(uint32_t state[8], const uint8_t block[64]) */
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(_WIN32)
 .globl _sha256_compress
 _sha256_compress:
 #else
