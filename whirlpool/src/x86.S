@@ -24,7 +24,7 @@
 
 /* void whirlpool_compress(uint8_t state[64], const uint8_t block[64]) */
 /* state and block can be optionally aligned to 8 bytes for slightly better performance. */
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(_WIN32)
 .globl _whirlpool_compress
 _whirlpool_compress:
 #else

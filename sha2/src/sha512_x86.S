@@ -23,7 +23,7 @@
 
 
 /* void sha512_compress(uint64_t state[8], const uint8_t block[128]) */
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(_WIN32)
 .globl _sha512_compress
 _sha512_compress:
 #else
