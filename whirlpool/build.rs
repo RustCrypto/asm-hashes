@@ -11,5 +11,5 @@ fn main() {
     cc::Build::new()
         .flag("-c")
         .file(asm_path)
-        .compile("libwhirlpool.a");
+        .compile("whirlpool");
 }
