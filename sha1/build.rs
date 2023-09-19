@@ -10,6 +10,8 @@ fn main() {
         "src/aarch64_apple.S"
     } else if target_arch == "aarch64" {
         "src/aarch64.S"
+    } else if target_arch == "loongarch64" {
+        "src/loongarch64.S"
     } else {
         panic!("Unsupported target architecture");
     };
