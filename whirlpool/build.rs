@@ -6,7 +6,7 @@ fn main() {
     } else if target_arch == "x86_64" {
         "src/x64.S"
     } else {
-        panic!("Unsupported target architecture");
+        panic!("Unsupported target architecture: {}", target_arch);
     };
     cc::Build::new()
         .flag("-c")

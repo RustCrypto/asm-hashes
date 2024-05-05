@@ -11,7 +11,7 @@ fn main() {
     } else if target_arch == "aarch64" {
         "src/aarch64.S"
     } else {
-        panic!("Unsupported target architecture");
+        panic!("Unsupported target architecture: {}", target_arch);
     };
     let mut build = cc::Build::new();
     if target_arch == "aarch64" {
