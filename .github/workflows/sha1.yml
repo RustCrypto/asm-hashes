@@ -63,7 +63,7 @@ jobs:
         with:
           toolchain: ${{ matrix.toolchain }}
           targets: x86_64-apple-darwin
-      - run: cargo test --release
+      - run: cargo test --release --target x86_64-apple-darwin
 
   # Cross-compiled tests
   cross:
