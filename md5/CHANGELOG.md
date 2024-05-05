@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.5.1 (2023-08-07)
 ### Changed
-- Prefix x86 asm symbols with `_`` on Windows like on Apple ([#61])
+- Prefix x86 asm symbols with `_` on Windows like on Apple ([#61])
 - Fix deprecated use of `cc::Build::compile` ([#59])
 
 [#61]: https://github.com/RustCrypto/asm-hashes/pull/61
