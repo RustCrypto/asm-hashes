@@ -5,43 +5,34 @@ version = 3
 
 [[package]]
 name = "cc"
-version = "1.0.82"
+version = "1.0.96"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "305fe645edc1442a0fa8b6726ba61d422798d37a52e12eaecf4b022ebbb88f01"
-dependencies = [
- "libc",
-]
-
-[[package]]
-name = "libc"
-version = "0.2.147"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
+checksum = "065a29261d53ba54260972629f9ca6bffa69bac13cd1fed61420f7fa68b9f8bd"
 
 [[package]]
 name = "md5-asm"
-version = "0.5.1"
-dependencies = [
- "cc",
-]
-
-[[package]]
-name = "sha1-asm"
 version = "0.5.2"
 dependencies = [
  "cc",
 ]
 
 [[package]]
+name = "sha1-asm"
+version = "0.5.3"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "sha2-asm"
-version = "0.6.3"
+version = "0.6.4"
 dependencies = [
  "cc",
 ]
 
 [[package]]
 name = "whirlpool-asm"
-version = "0.6.1"
+version = "0.6.2"
 dependencies = [
  "cc",
 ]
