@@ -12,6 +12,9 @@
 #[cfg(not(any(target_arch = "x86_64", target_arch = "x86", target_arch = "aarch64")))]
 compile_error!("crate can only be used on x86, x86_64 and AArch64 architectures");
 
+#[cfg(target_os = "windows")]
+compile_error!("crate does not support Windows targets");
+
 #[link(name = "sha1", kind = "static")]
 extern "C" {
     fn sha1_compress(state: &mut [u32; 5], block: &[u8; 64]);

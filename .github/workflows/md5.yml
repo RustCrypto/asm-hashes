@@ -65,35 +65,4 @@ jobs:
         with:
           toolchain: ${{ matrix.toolchain }}
           targets: x86_64-apple-darwin
-      - run: cargo test --release
-
-  # Windows tests
-  windows:
-    strategy:
-      matrix:
-        include:
-          # 64-bit Windows (GNU)
-          - target: x86_64-pc-windows-gnu
-            toolchain: 1.48.0 # MSRV
-          - target: x86_64-pc-windows-gnu
-            toolchain: stable
-          # 32-bit Windows (GNU)
-          - target: i686-pc-windows-gnu
-            toolchain: 1.48.0 # MSRV
-          - target: i686-pc-windows-gnu
-            toolchain: stable
-
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          targets: ${{ matrix.target }}
-      - uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW${{ startsWith(matrix.target, 'i686-') && '32' || '64' }}
-          pacboy: cc:p
-          path-type: inherit
-      - run: cargo test --target ${{ matrix.target }} --release
-        shell: msys2 {0}
+      - run: cargo test --release --target x86_64-apple-darwin

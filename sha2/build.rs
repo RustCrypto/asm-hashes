@@ -16,7 +16,7 @@ fn main() {
         build256.flag("-march=armv8-a+crypto");
         ("src/sha256_aarch64.S", "")
     } else {
-        panic!("Unsupported target architecture");
+        panic!("Unsupported target architecture: {}", target_arch);
     };
 
     if target_arch != "aarch64" {

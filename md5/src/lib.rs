@@ -12,6 +12,9 @@
 #[cfg(not(any(target_arch = "x86_64", target_arch = "x86")))]
 compile_error!("crate can only be used on x86 and x86-64 architectures");
 
+#[cfg(target_os = "windows")]
+compile_error!("crate does not support Windows targets");
+
 #[link(name = "md5", kind = "static")]
 extern "C" {
     fn md5_compress(state: &mut [u32; 4], block: &[u8; 64]);
